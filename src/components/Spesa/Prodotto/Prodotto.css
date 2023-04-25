@@ -1,0 +1,139 @@
+.select-container {
+    position: relative;
+    width: 90%;
+    margin: 20px;
+}
+
+/*
+overflow: hidden;
+*/
+
+.select-input {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+}
+
+.select-input:focus {
+    border-color: #0077FF;
+    box-shadow: 0px 0px 4px rgba(97, 97, 97, 0.4);
+}
+
+.select-input.found {
+    border: 1px solid;
+    border-color: #01c501;
+    box-shadow: 0px 0px 4px rgba(97, 97, 97, 0.4);
+}
+
+.select-input.notfound {
+    border: 1px solid;
+    border-color: #ff0000;
+    box-shadow: 0px 0px 4px rgba(97, 97, 97, 0.4);
+}
+
+.input-price {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+}
+
+.input-price:focus {
+    border-color: #0077FF;
+    box-shadow: 0px 0px 4px rgba(0, 119, 255, 0.4);
+}
+
+.select-menu {
+    position: absolute;
+    top: calc(100% + 0px);
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    /*
+    overflow-y: auto;
+    */
+    margin: 0px;
+}
+
+/* ------------------------------------------- */
+/* Personalizza l'aspetto della barra di scorrimento */
+::-webkit-scrollbar {
+    /* Larghezza della barra di scorrimento */
+    width: 0px;
+}
+
+::-webkit-scrollbar-track {
+    /* Colore di sfondo della traccia */
+    background-color: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    /* Colore della barra di scorrimento */
+    background-color: #888;
+    /* Raggio dei bordi della barra di scorrimento */
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    /* Colore della barra di scorrimento durante il passaggio del mouse */
+    background-color: #555;
+}
+
+/* ------------------------------------------- */
+
+
+.select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.3s ease-in-out;
+}
+
+.select-option:hover {
+    background-color: #173a63;
+    color: #fff;
+}
+
+.select-option.selected {
+    background-color: #173a63;
+    color: #fff;
+}
+
+.balloon {
+    position: absolute;
+    bottom: calc(100% + 1px);
+    left: 0;
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #70aaec;
+    border-radius: 4px;
+    z-index: 10;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+.select-container:focus-within .balloon {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+li {
+    list-style-type: none;
+}

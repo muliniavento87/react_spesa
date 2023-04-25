@@ -1,0 +1,118 @@
+.menu-container {
+    position: relative;
+}
+
+/*--------------------------*/
+/*--------------------------*/
+.menu-btn:focus {
+    outline: none;
+}
+
+.menu-btn {
+    position: relative;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    color: #000;
+    cursor: pointer;
+    font-size: 2rem;
+    z-index: 10;
+    height: 35px;
+    width: 30px;
+}
+
+/* menu chiuso (icona burger) */
+.menu-btn span {
+    border-radius: 1px;
+    display: block;
+    position: absolute;
+    background-color: #000;
+    height: 3px;
+    width: 100%;
+}
+
+.menu-btn span:nth-child(1) {
+    top: 12px;
+}
+
+.menu-btn span:nth-child(2) {
+    top: 20px;
+}
+
+.menu-btn span:nth-child(3) {
+    top: 28px;
+}
+
+.menu-btn.open {
+    margin-left: 180px;
+}
+
+/* menu aperto (icona X) */
+.open span {
+    background-color: rgb(255, 255, 255);
+    height: 2px;
+}
+
+.open span:nth-child(1) {
+    top: 19px;
+    transform: rotate(-45deg);
+}
+
+.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.open span:nth-child(3) {
+    top: 19px;
+    transform: rotate(45deg);
+}
+
+/*--------------------------*/
+/*--------------------------*/
+/* container menu */
+.menu {
+    position: fixed;
+    padding-top: 80px;
+    padding-left: 0px;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: rgb(41, 41, 41);
+    transition: transform 0.3s ease-in-out;
+    transform: translateX(-100%);
+    z-index: 0;
+}
+
+.menu.open {
+    transform: translateX(0);
+}
+
+/* voci menu */
+.menu-item {
+    padding: 10px;
+    padding-left: 0px;
+    cursor: pointer;
+}
+
+/* singola voce menu */
+.item {
+    padding-left: 30px;
+    color: #fff;
+    font-size: 1.2rem;
+}
+
+.menu-item:hover {
+    background-color: rgb(68, 68, 68);
+}
+
+/*
+.menu div:has(>div) {
+    padding: 10px;
+    padding-left: 20px;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+*/
