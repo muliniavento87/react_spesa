@@ -1,3 +1,6 @@
+# mie cartelle
+build/
+
 # Logs
 logs
 *.log
