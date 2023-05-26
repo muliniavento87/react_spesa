@@ -13,3 +13,8 @@ button:hover {
     /* Green */
     color: white;
 }
+
+.tdClass {
+    vertical-align: middle;
+    text-align: center;
+}
