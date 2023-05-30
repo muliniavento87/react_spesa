@@ -52,7 +52,7 @@ export default function Spesa({ idSpesa, delSpesa }) {
             newListaProdotti.push({
                 id: localContext.listaProdotti.length + i,
                 idPrd: prodotto['id'],
-                name: prodotto['name'] + (" (" + (i + 1) + ")"),
+                name: prodotto['name'] + ((i > 0) ? (" (" + (i + 1) + ")") : ""),
                 price: prezzo
             });
         }

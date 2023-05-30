@@ -133,8 +133,7 @@ export default function Prodotto({ onAdd }) {
                                         <div key={option.id}
                                             className={`select-option ${option.id === product.id ? "selected" : ""}`}
                                             onClick={(e) => { hOClick(option) }}
-                                        >
-                                            {/*"[id: " + option.id + "] "*/}{option.name}
+                                        >{option.name}
                                         </div>
                                     ))}
                                 </div>
