@@ -4,8 +4,6 @@
 */
 .interface-cnt {
     position: relative;
-    min-width: 20%;
-    max-width: 50%;
     margin-top: 20px;
     margin-bottom: 20px;
     margin-right: 5%;
@@ -17,19 +15,19 @@
 */
 .cnt-prodotto {
     min-width: 120px;
-    max-width: 180px;
+    max-width: 165px;
 }
 
 .cnt-quantita {
     margin-top: 0px;
-    min-width: 60px;
-    max-width: 60px;
+    min-width: 50px;
+    max-width: 50px;
 }
 
 .cnt-prezzo {
     margin-top: 0px;
     min-width: 70px;
-    max-width: 70px;
+    max-width: 85px;
 }
 
 .cnt-button-add {
