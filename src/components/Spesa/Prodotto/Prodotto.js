@@ -140,16 +140,16 @@ export default function Prodotto({ onAdd }) {
                             )}
 
                         </div>
-                        <div className="interface-cnt cnt-quantita">
-                            <input type="number" step='0' placeholder="Q.tà"
-                                className={`select-input ${quantityOk() ? "found" : "notfound"}`}
-                                value={quantity} onChange={(e) => setQuantity(e.target.value)}
-                            />
-                        </div>
                         <div className="interface-cnt cnt-prezzo">
                             <input type="number" step='0.01' placeholder="Prezzo"
                                 className={`select-input ${priceOk() ? "found" : "notfound"}`}
                                 value={price} onChange={(e) => setPrice(e.target.value)}
+                            />
+                        </div>
+                        <div className="interface-cnt cnt-quantita">
+                            <input type="number" step='0' placeholder="Q.tà"
+                                className={`select-input ${quantityOk() ? "found" : "notfound"}`}
+                                value={quantity} onChange={(e) => setQuantity(e.target.value)}
                             />
                         </div>
                     </td>
