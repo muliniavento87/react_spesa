@@ -1,5 +1,5 @@
 export class va {
-    static HOST = "localhost";
+    static HOST = "muliniavento87.ignorelist.com";
     static PORT = "8001";
     static HOST_AND_PORT = `${va.HOST}:${va.PORT}`;
     // eslint-disable-next-line
