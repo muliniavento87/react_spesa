@@ -36,27 +36,33 @@ export default function Spesa({ idSpesa, delSpesa }) {
     });
 
     // ---------------
-    const addProdottoAlCarrello = (prodotto, prezzo) => {
+    const addProdottoAlCarrello = (prodotto, prezzo, quantita) => {
         // Salviamo in "rows" la "newRow" attuale
         let newNotifica = localContext.notifica;
-        if (prodotto['id'] === -1) {
-            newNotifica = {
-                show: false,
-                title: "",
-                msg: "Aggiunto nuovo prodotto \"" + prodotto['name'] + "\" al db"
-            };
+        let newListaProdotti = [];
+        for (let i = 0; i < quantita; i++) {
+            if (prodotto['id'] === -1) {
+                newNotifica = {
+                    show: false,
+                    title: "",
+                    msg: "Aggiunto nuovo prodotto \"" + prodotto['name'] + "\" al db"
+                };
+            }
+
+            newListaProdotti.push({
+                id: localContext.listaProdotti.length + i,
+                idPrd: prodotto['id'],
+                name: prodotto['name'] + (" (" + (i + 1) + ")"),
+                price: prezzo
+            });
         }
-        let newListaProdotti = [{
-            id: localContext.listaProdotti.length,
-            idPrd: prodotto['id'],
-            name: prodotto['name'],
-            price: prezzo
-        }].concat(localContext.listaProdotti);
+
+        newListaProdotti = newListaProdotti.concat(localContext.listaProdotti);
 
         setLocalContext(prevState => ({
             ...prevState,
             listaProdotti: newListaProdotti,
-            totAmount: localContext.totAmount + prezzo,
+            totAmount: localContext.totAmount + (prezzo * quantita),
             notifica: newNotifica
         }));
     };
@@ -141,11 +147,12 @@ export default function Spesa({ idSpesa, delSpesa }) {
                                 type="number"
                                 step='0.01'
                                 placeholder="Valore ticket"
-                                className="input-price"
+                                className="select-input"
                                 value={localContext.valTicket}
                                 onChange={(e) => setLocalContext(prevState => ({
                                     ...prevState, valTicket: e.target.value
                                 }))}
+                                style={{ minWidth: "120px", maxWidth: "130px" }}
                             />
                         </td>
 
@@ -158,21 +165,17 @@ export default function Spesa({ idSpesa, delSpesa }) {
                 (localContext.valTicket !== 0 && localContext.valTicket === "") ? "" :
                     "  (" + parseInt(localContext.totAmount / localContext.valTicket) + " ticket e " + (localContext.totAmount % localContext.valTicket).toFixed(2) + " cash)"
             }
-            <br /><br />
-            <table>
-                <tbody>
-                    {<Prodotto onAdd={addProdottoAlCarrello} />}
-                </tbody>
-            </table>
+            <br />
+            {<Prodotto onAdd={addProdottoAlCarrello} />}
             <table
                 className="table table-striped table-hover"
                 style={{ minWidth: "350px", maxWidth: "600px" }}
             >
                 <thead>
                     <tr>
-                        <th className="tdClass">Name</th>
-                        <th className="tdClass">Value</th>
-                        <th className="tdClass">Actions</th>
+                        <th className="tdClass">Prodotto</th>
+                        <th className="tdClass">Prezzo</th>
+                        <th className="tdClass">Action</th>
                     </tr>
                 </thead>
                 <tbody>

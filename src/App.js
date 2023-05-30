@@ -28,7 +28,6 @@ function App() {
         <>
             <div className="p-4" id="schermata">
                 <button onClick={addSpesa}>Nuova spesa</button>
-                <br />
                 {
                     indexSpesa.length > 0 && indexSpesa.map(id => <Spesa key={id} idSpesa={id} delSpesa={delSpesa} />)
                 }

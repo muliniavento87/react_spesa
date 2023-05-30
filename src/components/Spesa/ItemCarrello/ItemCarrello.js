@@ -7,6 +7,9 @@ export default function ItemCarrello({ id, name, price, onRemove, onChange }) {
     const [r, setR] = useState({ price: price });
 
     function edit(val) {
+        if (val === "") {
+            val = 0;
+        }
         setR({ price: val });
         onChange(id, val);
     }

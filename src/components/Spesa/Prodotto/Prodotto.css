@@ -1,16 +1,50 @@
-.select-container {
+/*
+    creata come una sorta di interface di base da cui
+    generare le altre classi CSS per un certo elemento
+*/
+.interface-cnt {
     position: relative;
-    width: 90%;
-    margin: 20px;
+    min-width: 20%;
+    max-width: 70%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-right: 5%;
+    display: inline-block;
 }
 
 /*
-overflow: hidden;
+    uso in combo con ".interface-cnt"
 */
+.cnt-prodotto {
+    min-width: 120px;
+    max-width: 190px;
+}
+
+.cnt-quantita {
+    min-width: 60px;
+    max-width: 60px;
+}
+
+.cnt-prezzo {
+    margin-top: 0px;
+    min-width: 80px;
+    max-width: 90px;
+}
+
+.cnt-button-add {
+    min-width: 100%;
+    max-width: 100%;
+}
+
+.td-button-add {
+    vertical-align: middle;
+    text-align: center;
+}
+
 
 .select-input {
     width: 100%;
-    padding: 8px 12px;
+    padding: 5px 10px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -36,21 +70,6 @@ overflow: hidden;
     box-shadow: 0px 0px 4px rgba(97, 97, 97, 0.4);
 }
 
-.input-price {
-    width: 100%;
-    padding: 8px 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    box-sizing: border-box;
-    transition: all 0.3s ease-in-out;
-}
-
-.input-price:focus {
-    border-color: #0077FF;
-    box-shadow: 0px 0px 4px rgba(0, 119, 255, 0.4);
-}
 
 .select-menu {
     position: absolute;
