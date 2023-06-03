@@ -29,25 +29,29 @@ export class Api {
         const url = `${va.URL}/api/app_spesa/spesa/get_spesa_aperta/${params}`;
         return await axios.get(url);
     }
+
+    /// TODO
     static async salvaSpesa(product) {
         // creazione o update
         const params = `?name=${product.name.toLowerCase()}&id=${product.id}`;
         const url = `${va.URL}/api/app_spesa/prodotto/save_prodotto/${params}`;
         return await axios.get(url);
     }
+    /// TODO
     static async eliminaSpesa(product) {
         // cancellazione
         const params = `?name=${product.name.toLowerCase()}&id=${product.id}`;
         const url = `${va.URL}/api/app_spesa/prodotto/save_prodotto/${params}`;
         return await axios.get(url);
     }
-
+    /// TODO
     static async salvaCarrello(product) {
         // creazione o update
         const params = `?name=${product.name.toLowerCase()}&id=${product.id}`;
         const url = `${va.URL}/api/app_spesa/prodotto/save_prodotto/${params}`;
         return await axios.get(url);
     }
+    /// TODO
     static async eliminaCarrello(product) {
         // cancellazione
         const params = `?name=${product.name.toLowerCase()}&id=${product.id}`;

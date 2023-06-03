@@ -10,12 +10,6 @@ export default function Spesa({ contextSpesaAperta }) {
         nomeSpesa: '',
         nomeSupermercato: ''
     });
-    /*
-    const [fields, setFields] = useState({
-        nomeSpesa: '',
-        nomeSupermercato: ''
-    });
-    */
 
     function removeSpesa() {
         // cancello tutti i carrelli
