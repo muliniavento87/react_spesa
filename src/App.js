@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import SpesaAperta from "./components/SpesaAperta/SpesaAperta";
 import Spesa from "./components/Spesa/Spesa";
 
@@ -10,15 +10,21 @@ function App() {
     const contextSpesaAperta = {
         get: () => {
             if (!vecchiaSpesa) {
+                return null;
+            }
+            return vecchiaSpesa;
+        },
+        getId: () => {
+            if (!vecchiaSpesa) {
                 return -1;
             }
-            return -1;
+            return vecchiaSpesa.id;
         },
         reset: () => {
             setVecchiaSpesa(null);
         },
-        load: async (vecchiaSpesa) => {
-            setVecchiaSpesa(vecchiaSpesa);
+        load: async (spesa) => {
+            setVecchiaSpesa(spesa);
         },
     };
 

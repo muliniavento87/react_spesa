@@ -20,13 +20,6 @@ export default function SpesaAperta({ context }) {
     };
 
     const hIChange = (value) => {
-        /*
-        // NASCONDI risultati se stringa vuota:
-        //  - per annullare il NASCONDI => rimuovere il blocco if sotto
-        if (!prodName || prodName === '') {
-            setShowOptions(false);
-        }
-        */
         (async () => {
             setVecchiaSpesa(null);
             setSearch(value);
@@ -35,13 +28,6 @@ export default function SpesaAperta({ context }) {
     };
 
     const hIFocus = (value) => {
-        /*
-        // NASCONDI risultati se stringa vuota:
-        //  - per annullare il NASCONDI => rimuovere il blocco if sotto
-        if (!value || value === '') {
-            setShowOptions(false);
-        }
-        */
         setShowOptions(true);
     };
 
@@ -77,7 +63,7 @@ export default function SpesaAperta({ context }) {
     const getSpesaFull = async (spesaVecchia) => {
         const response = await Api.getSpesaAperta(spesaVecchia.id);
         setShowOptions(false);
-        context.load(spesaVecchia);
+        context.load(response.data);
         return response;
     }
 

@@ -7,11 +7,15 @@ import "./Spesa.css";
 export default function Spesa({ contextSpesaAperta }) {
     const [indexCarrello, setIndexCarrello] = useState([]);
     const [localContext, setLocalContext] = useState({
-        idSpesa: -1,
         nomeSpesa: '',
         nomeSupermercato: ''
     });
-
+    /*
+    const [fields, setFields] = useState({
+        nomeSpesa: '',
+        nomeSupermercato: ''
+    });
+    */
 
     function removeSpesa() {
         // cancello tutti i carrelli
@@ -22,6 +26,40 @@ export default function Spesa({ contextSpesaAperta }) {
         // svuoto lista carrelli della spesa
         setIndexCarrello([]);
     }
+
+    // gestione spesa
+    const contextSpesa = {
+        refresh: async () => {
+            let spesaAttuale = contextSpesaAperta.get();
+
+            console.log(spesaAttuale);
+            if (!spesaAttuale) {
+                spesaAttuale = {
+                    id: -1,
+                    name: '',
+                    supermercato: ''
+                };
+            }
+            setLocalContext(prevState => ({
+                ...prevState,
+                idSpesa: spesaAttuale.id,
+                nomeSpesa: spesaAttuale.name,
+                nomeSupermercato: spesaAttuale.supermercato,
+            }));
+        },
+        setNomeSupermercato: (e) => {
+            setLocalContext(prevState => ({
+                ...prevState,
+                nomeSupermercato: e.target.value
+            }))
+        },
+        setNomeSpesa: (e) => {
+            setLocalContext(prevState => ({
+                ...prevState,
+                nomeSpesa: e.target.value
+            }))
+        },
+    };
 
     // gestione carrello
     const contextCarrello = {
@@ -49,14 +87,15 @@ export default function Spesa({ contextSpesaAperta }) {
         },
     };
 
+
     useEffect(() => {
-        setLocalContext(prevState => ({
-            ...prevState,
-            idSpesa: contextSpesaAperta.get()
-        }));
+        (async () => {
+            await contextSpesa.refresh();
+        })();
+
     },
         // eslint-disable-next-line
-        []
+        [contextSpesaAperta.get()]
     );
 
 
@@ -67,16 +106,13 @@ export default function Spesa({ contextSpesaAperta }) {
                 <input type="text" placeholder="Supermercato"
                     className={`select-input`}
                     value={localContext.nomeSupermercato}
-                    onChange={(e) => setLocalContext(prevState => ({
-                        ...prevState,
-                        nomeSupermercato: e.target.value
-                    }))}
+                    onChange={(e) => contextSpesa.setNomeSupermercato(e)}
                     style={{ width: '150px' }}
                 />
                 <input type="text" placeholder="Nome spesa"
                     className={`select-input`}
                     value={localContext.nomeSpesa}
-                    onChange={(e) => setLocalContext(prevState => ({
+                    onChange={(e) => contextSpesa.setLocalContext(prevState => ({
                         ...prevState,
                         nomeSpesa: e.target.value
                     }))}
