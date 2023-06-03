@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import "./Prodotto.css";
-import { va } from "../../../settings/var_ambiente.js";
+import { Api } from '../../../../Api/Api';
+import './Prodotto.css';
 
 
-//export default function Prodotto({ id, onAdd, onChange }) {
-export default function Prodotto({ onAdd }) {
+export default function Prodotto({ context }) {
     const [product, setProduct] = useState({ id: -1, name: "" });
     const [price, setPrice] = useState("");
     const [quantity, setQuantity] = useState(1);
@@ -36,16 +34,25 @@ export default function Prodotto({ onAdd }) {
 
     function onAddR() {
         if (productOk() && priceOk() && quantityOk()) {
+            (async () => {
+                await context.add(product, parseFloat(price), parseInt(quantity));
+                // eslint-disable-next-line
+                const response = await Api.salvaProdotto(product);
+                setProduct({ id: -1, name: "" });
+                setPrice("");
+                setQuantity(1);
+            })();
+            /*
             onAdd(product, parseFloat(price), parseInt(quantity));
             // salvo sul db il prodotto
             (async () => {
-                const params = `?name=${product.name.toLowerCase()}&id=${product.id}`;
-                const url = `${va.URL}/api/app_spesa/prodotto/save_prodotto/${params}`;
-                await axios.get(url);
+                // eslint-disable-next-line
+                const response = await Api.salvaProdotto(product);
             })();
             setProduct({ id: -1, name: "" });
             setPrice("");
             setQuantity(1);
+            */
         }
     }
 
@@ -80,10 +87,9 @@ export default function Prodotto({ onAdd }) {
     };
 
     useEffect(() => {
-        // ricerca ONLINE (api REST) [http://localhost:8001/api/app_test_00/test?name=]
+        // ricerca ONLINE (api REST)
         (async () => {
-            const url = `${va.URL}/api/app_spesa/prodotto/get_prodotti/?name=${product.name.toLowerCase()}`;
-            const response = await axios.get(url);
+            const response = await Api.ricercaProdotto(product);
 
             setFilteredOptions(
                 response.data.filter((option) =>
