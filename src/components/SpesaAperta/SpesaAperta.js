@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { Api } from '../../../../Api/Api';
-import './Prodotto.css';
+import { Api } from '../../Api/Api';
+import './SpesaAperta.css';
 
 
-export default function Prodotto({ context }) {
+export default function SpesaAperta({ context }) {
     const [product, setProduct] = useState({ id: -1, name: "" });
     const [price, setPrice] = useState("");
     const [quantity, setQuantity] = useState(1);
@@ -11,7 +11,7 @@ export default function Prodotto({ context }) {
     const [showOptions, setShowOptions] = useState(false);
     // riferimento all'oggetto selezione multipla prodotto
     // (serve per capire quando ci clicchiamo sopra o no)
-    const multiSelectProductRef = useRef(null);
+    const multiSelectSpesaRef = useRef(null);
 
     function productOk() {
         if (product.name.trim() !== "") {
@@ -19,25 +19,13 @@ export default function Prodotto({ context }) {
         }
         return false;
     }
-    function priceOk() {
-        if (price !== 0 && price !== "") {
-            return true;
-        }
-        return false;
-    }
-    function quantityOk() {
-        if (quantity !== 0 && quantity !== "") {
-            return true;
-        }
-        return false;
-    }
 
     function onAddR() {
-        if (productOk() && priceOk() && quantityOk()) {
+        if (productOk()) {
             (async () => {
                 await context.add(product, parseFloat(price), parseInt(quantity));
                 // eslint-disable-next-line
-                const response = await Api.salvaProdotto(product);
+                //const response = await Api.salvaProdotto(product);
                 setProduct({ id: -1, name: "" });
                 setPrice("");
                 setQuantity(1);
@@ -46,49 +34,78 @@ export default function Prodotto({ context }) {
     }
 
     const handleClickOutside = (event) => {
-        if (multiSelectProductRef.current && !multiSelectProductRef.current.contains(event.target)) {
+        if (multiSelectSpesaRef.current && !multiSelectSpesaRef.current.contains(event.target)) {
             setShowOptions(false);
         }
     };
 
-    const hIChange = (prodName) => {
-        setProduct({ id: -1, name: prodName });
-        setShowOptions(true);
+    const hIChange = (value) => {
+        /*
         // NASCONDI risultati se stringa vuota:
         //  - per annullare il NASCONDI => rimuovere il blocco if sotto
         if (!prodName || prodName === '') {
             setShowOptions(false);
         }
+        */
+        (async () => {
+            await Api.listaSpeseAperte(value);
+            setProduct({ id: -1, name: value });
+            setShowOptions(true);
+        })();
     };
 
-    const hIFocus = (prodName) => {
-        setShowOptions(true);
+    const hIFocus = (value) => {
+        /*
         // NASCONDI risultati se stringa vuota:
         //  - per annullare il NASCONDI => rimuovere il blocco if sotto
         if (!prodName || prodName === '') {
             setShowOptions(false);
         }
+        */
+        (async () => {
+            await Api.listaSpeseAperte(value);
+            setShowOptions(true);
+        })();
     };
 
-    const hOClick = (p) => {
-        setProduct({ id: p.id, name: p.name });
+    const hOClick = (spesaVecchia) => {
+        //setProduct({ id: p.id, name: p.name });
         setShowOptions(false);
+        console.log(spesaVecchia);
+        (async () => {
+            const response = await Api.getSpesaAperta(spesaVecchia.id);
+            console.log(response);
+            setShowOptions(true);
+        })();
     };
+
+
+    const getListSpeseAperte = async (searchValue = '') => {
+        const response = await Api.listaSpeseAperte(searchValue.toLowerCase());
+        console.log(response);
+
+        setFilteredOptions(
+            response.data.filter((option) =>
+                option.name.toLowerCase().includes(searchValue.toLowerCase())
+            ).map(function (o) {
+                const label = '(' + o.id + ') ' + o.name + ' [' + o.date_update + ']';
+                return {
+                    'id': o.id,
+                    //'name': o.name
+                    'name': label
+                };
+            })
+        );
+    }
+
 
     useEffect(() => {
         // ricerca ONLINE (api REST)
-        (async () => {
-            const response = await Api.ricercaProdotto(product);
-
-            setFilteredOptions(
-                response.data.filter((option) =>
-                    option.name.toLowerCase().includes(product.name.toLowerCase())
-                ).map(function (o) { return { 'id': o.id, 'name': o.name } })
-            );
-        })();
+        getListSpeseAperte(product.name);
     },
         // eslint-disable-next-line
         [product]);
+
 
     useEffect(() => {
         if (filteredOptions.length === 1 && product.id === -1) {
@@ -113,11 +130,11 @@ export default function Prodotto({ context }) {
             <tbody>
                 <tr>
                     <td>
-                        <div className="interface-cnt cnt-prodotto" ref={multiSelectProductRef}>
+                        <div className="interface-cnt cnt-spesa" ref={multiSelectSpesaRef}>
                             <input
                                 type="text"
-                                className={`select-input ${productOk() ? "found" : "notfound"}`}
-                                placeholder="Prodotto"
+                                className={`select-input-spesa ${productOk() ? "found" : "notfound"}`}
+                                placeholder="Vecchia spesa"
                                 value={product.name}
                                 onChange={(e) => hIChange(e.target.value)}
                                 onFocus={(e) => hIFocus(e.target.value)}
@@ -133,28 +150,12 @@ export default function Prodotto({ context }) {
                                     ))}
                                 </div>
                             )}
-
-                        </div>
-                        <div className="interface-cnt cnt-prezzo">
-                            <input type="number" step='0.01' placeholder="Prezzo"
-                                className={`select-input ${priceOk() ? "found" : "notfound"}`}
-                                value={price} onChange={(e) => setPrice(e.target.value)}
-                            />
-                        </div>
-                        <div className="interface-cnt cnt-quantita">
-                            <input type="number" step='0' placeholder="Q.tà"
-                                className={`select-input ${quantityOk() ? "found" : "notfound"}`}
-                                value={quantity} onChange={(e) => setQuantity(e.target.value)}
-                            />
                         </div>
                     </td>
-                    <td className='td-button-add'>
+                    <td className='ps-4 td-button-add'>
                         <div className="interface-cnt cnt-button-add">
-                            <button className="btn" onClick={() => onAddR()}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" className="bi bi-plus-circle" viewBox="0 0 16 16">
-                                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                                </svg>
+                            <button onClick={() => onAddR()}>
+                                Reset spesa
                             </button>
                         </div>
                     </td>

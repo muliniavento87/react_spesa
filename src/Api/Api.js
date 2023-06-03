@@ -17,6 +17,18 @@ export class Api {
         return await axios.get(url);
     }
 
+    static async listaSpeseAperte(nameSpesa) {
+        // lista spese aperte
+        const params = `?search=${nameSpesa.toLowerCase()}`;
+        const url = `${va.URL}/api/app_spesa/spesa/lista_spese_aperte/${params}`;
+        return await axios.get(url);
+    }
+    static async getSpesaAperta(idSpesa) {
+        // recupera spesa aperta per ID (con tutti i carrelli e i prodotti collegati)
+        const params = `?id=${idSpesa}`;
+        const url = `${va.URL}/api/app_spesa/spesa/get_spesa_aperta/${params}`;
+        return await axios.get(url);
+    }
     static async salvaSpesa(product) {
         // creazione o update
         const params = `?name=${product.name.toLowerCase()}&id=${product.id}`;

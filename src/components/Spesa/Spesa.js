@@ -4,7 +4,7 @@ import Carrello from "./Carrello/Carrello";
 import "./Spesa.css";
 
 
-export default function Spesa() {
+export default function Spesa({ contextSpesaAperta }) {
     const [indexCarrello, setIndexCarrello] = useState([]);
     const [localContext, setLocalContext] = useState({
         idSpesa: -1,
@@ -50,6 +50,10 @@ export default function Spesa() {
     };
 
     useEffect(() => {
+        setLocalContext(prevState => ({
+            ...prevState,
+            idSpesa: contextSpesaAperta.get()
+        }));
     },
         // eslint-disable-next-line
         []
@@ -59,11 +63,7 @@ export default function Spesa() {
     return (
         <>
             <br />
-            <div
-                className="p-4"
-                id="info_spesa"
-                style={{ color: "blue" }}
-            >
+            <div>
                 <input type="text" placeholder="Supermercato"
                     className={`select-input`}
                     value={localContext.nomeSupermercato}
@@ -89,7 +89,7 @@ export default function Spesa() {
                     </svg>
                 </button>
             </div>
-            <div className="p-4 pt-0">
+            <div className="pt-3">
                 <button onClick={() => { contextCarrello.add() }}>Nuovo carrello</button>
                 {
                     indexCarrello.length > 0 && indexCarrello.map(id => <Carrello key={id} idCarrello={id} context={contextCarrello} />)
