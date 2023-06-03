@@ -4,34 +4,14 @@ import './SpesaAperta.css';
 
 
 export default function SpesaAperta({ context }) {
-    const [product, setProduct] = useState({ id: -1, name: "" });
-    const [price, setPrice] = useState("");
-    const [quantity, setQuantity] = useState(1);
     const [filteredOptions, setFilteredOptions] = useState([]);
     const [showOptions, setShowOptions] = useState(false);
+    const [search, setSearch] = useState('');
+    const [vecchiaSpesa, setVecchiaSpesa] = useState(null);
     // riferimento all'oggetto selezione multipla prodotto
     // (serve per capire quando ci clicchiamo sopra o no)
     const multiSelectSpesaRef = useRef(null);
 
-    function productOk() {
-        if (product.name.trim() !== "") {
-            return true;
-        }
-        return false;
-    }
-
-    function onAddR() {
-        if (productOk()) {
-            (async () => {
-                await context.add(product, parseFloat(price), parseInt(quantity));
-                // eslint-disable-next-line
-                //const response = await Api.salvaProdotto(product);
-                setProduct({ id: -1, name: "" });
-                setPrice("");
-                setQuantity(1);
-            })();
-        }
-    }
 
     const handleClickOutside = (event) => {
         if (multiSelectSpesaRef.current && !multiSelectSpesaRef.current.contains(event.target)) {
@@ -48,8 +28,8 @@ export default function SpesaAperta({ context }) {
         }
         */
         (async () => {
-            await Api.listaSpeseAperte(value);
-            setProduct({ id: -1, name: value });
+            setVecchiaSpesa(null);
+            setSearch(value);
             setShowOptions(true);
         })();
     };
@@ -58,32 +38,28 @@ export default function SpesaAperta({ context }) {
         /*
         // NASCONDI risultati se stringa vuota:
         //  - per annullare il NASCONDI => rimuovere il blocco if sotto
-        if (!prodName || prodName === '') {
+        if (!value || value === '') {
             setShowOptions(false);
         }
         */
+        setShowOptions(true);
+    };
+
+    const hOClick = (spesaSelected) => {
         (async () => {
-            await Api.listaSpeseAperte(value);
-            setShowOptions(true);
+            const response = await getSpesaFull(spesaSelected);
+            let newSearch = response.data.name;
+            if (!newSearch || newSearch === '') {
+                newSearch = response.data.id.toString();
+            }
+            setVecchiaSpesa(response.data);
+            setSearch(newSearch);
         })();
     };
 
-    const hOClick = (spesaVecchia) => {
-        //setProduct({ id: p.id, name: p.name });
-        setShowOptions(false);
-        console.log(spesaVecchia);
-        (async () => {
-            const response = await Api.getSpesaAperta(spesaVecchia.id);
-            console.log(response);
-            setShowOptions(true);
-        })();
-    };
 
-
-    const getListSpeseAperte = async (searchValue = '') => {
+    const getListaSpese = async (searchValue = '') => {
         const response = await Api.listaSpeseAperte(searchValue.toLowerCase());
-        console.log(response);
-
         setFilteredOptions(
             response.data.filter((option) =>
                 option.name.toLowerCase().includes(searchValue.toLowerCase())
@@ -91,31 +67,35 @@ export default function SpesaAperta({ context }) {
                 const label = '(' + o.id + ') ' + o.name + ' [' + o.date_update + ']';
                 return {
                     'id': o.id,
-                    //'name': o.name
                     'name': label
                 };
             })
         );
+        return response;
+    }
+
+    const getSpesaFull = async (spesaVecchia) => {
+        const response = await Api.getSpesaAperta(spesaVecchia.id);
+        setShowOptions(false);
+        context.load(spesaVecchia);
+        return response;
+    }
+
+    const resetSpesa = () => {
+        setSearch('');
+        setVecchiaSpesa(null);
+        context.reset();
     }
 
 
     useEffect(() => {
         // ricerca ONLINE (api REST)
-        getListSpeseAperte(product.name);
+        (async () => {
+            await getListaSpese(search);
+        })();
     },
         // eslint-disable-next-line
-        [product]);
-
-
-    useEffect(() => {
-        if (filteredOptions.length === 1 && product.id === -1) {
-            if (filteredOptions[0].name.toLowerCase() === product.name.toLowerCase()) {
-                setProduct(filteredOptions[0]);
-                setFilteredOptions([]);
-                setShowOptions(false);
-            }
-        }
-    }, [filteredOptions, product]);
+        [search]);
 
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
@@ -133,9 +113,9 @@ export default function SpesaAperta({ context }) {
                         <div className="interface-cnt cnt-spesa" ref={multiSelectSpesaRef}>
                             <input
                                 type="text"
-                                className={`select-input-spesa ${productOk() ? "found" : "notfound"}`}
+                                className={`select-input-spesa ${vecchiaSpesa ? "found" : "notfound"}`}
                                 placeholder="Vecchia spesa"
-                                value={product.name}
+                                value={search}
                                 onChange={(e) => hIChange(e.target.value)}
                                 onFocus={(e) => hIFocus(e.target.value)}
                             />
@@ -143,7 +123,7 @@ export default function SpesaAperta({ context }) {
                                 <div className="select-menu">
                                     {filteredOptions.map((option, index) => (
                                         <div key={option.id}
-                                            className={`select-option ${option.id === product.id ? "selected" : ""}`}
+                                            className={`select-option ${(vecchiaSpesa && option.id === vecchiaSpesa.id) ? "selected" : ""}`}
                                             onClick={(e) => { hOClick(option) }}
                                         >{option.name}
                                         </div>
@@ -153,11 +133,11 @@ export default function SpesaAperta({ context }) {
                         </div>
                     </td>
                     <td className='ps-4 td-button-add'>
-                        <div className="interface-cnt cnt-button-add">
-                            <button onClick={() => onAddR()}>
+                        {vecchiaSpesa && <div className="interface-cnt cnt-button-add">
+                            <button onClick={() => resetSpesa()}>
                                 Reset spesa
                             </button>
-                        </div>
+                        </div>}
                     </td>
                 </tr>
             </tbody>
