@@ -21,8 +21,9 @@ export default function SpesaAperta({ context }) {
 
     const hIChange = (value) => {
         (async () => {
-            setVecchiaSpesa(null);
             setSearch(value);
+            context.reset();
+            setVecchiaSpesa(null);
             setShowOptions(true);
         })();
     };
@@ -69,8 +70,8 @@ export default function SpesaAperta({ context }) {
 
     const resetSpesa = () => {
         setSearch('');
-        setVecchiaSpesa(null);
         context.reset();
+        setVecchiaSpesa(null);
     }
 
 

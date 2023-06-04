@@ -5,16 +5,14 @@ import Prodotto from "./Prodotto/Prodotto";
 import "./Carrello.css";
 
 
-export default function Carrello({ idCarrello, context }) {
+export default function Carrello({ idCarrello, context, contextSpesaAperta }) {
     const [localContext, setLocalContext] = useState({
-        idCarrello: -1,
+        idCarrello: idCarrello,
         listaProdotti: [],
-        valTicket: "",
+        nomeCarrello: '',
+        valTicket: '',
         totAmount: 0,
         notifica: { show: false, title: "", msg: "" }
-    });
-    const [fields, setFields] = useState({
-        nomeCarrello: ''
     });
 
     // ---------------
@@ -39,6 +37,50 @@ export default function Carrello({ idCarrello, context }) {
         // eslint-disable-next-line
         [localContext.listaProdotti]
     );
+
+    // gestione carrello
+    const contextCarrello = {
+        refresh: async () => {
+            let carrello = {
+                listaProdotti: [],
+                nomeCarrello: '',
+                valTicket: '',
+                totAmount: 0,
+            };
+
+            let vecchiaSpesa = contextSpesaAperta.get();
+            if (vecchiaSpesa) {
+                if (vecchiaSpesa.carrelli.length > 0 && idCarrello !== -1) {
+                    // ho un vecchio carrello da caricare
+                    let vecchioCarrello = vecchiaSpesa.carrelli.filter((o) => o.id === idCarrello.id);
+                    if (vecchioCarrello) {
+                        vecchioCarrello = vecchioCarrello[0];
+                        carrello.nomeCarrello = vecchioCarrello.name;
+                        carrello.valTicket = vecchioCarrello.ticket;
+                        if (carrello.valTicket <= 0) {
+                            carrello.valTicket = '';
+                        }
+                        for (let lp of vecchioCarrello.lista_prodotti) {
+                            carrello.listaProdotti = [{
+                                id: carrello.listaProdotti.length,
+                                idPrd: lp.prodotto.id,
+                                name: lp.prodotto.name,
+                                price: lp.product_amount
+                            }].concat(carrello.listaProdotti);
+                            carrello.totAmount += lp.product_amount;
+                        }
+                    }
+                }
+            }
+            setLocalContext(prevState => ({
+                ...prevState,
+                listaProdotti: carrello.listaProdotti,
+                nomeCarrello: carrello.nomeCarrello,
+                valTicket: carrello.valTicket,
+                totAmount: carrello.totAmount,
+            }));
+        },
+    };
 
     // gestione prodotto
     const contextProdotto = {
@@ -70,7 +112,7 @@ export default function Carrello({ idCarrello, context }) {
                 totAmount: localContext.totAmount + (prezzo * quantita),
                 notifica: newNotifica
             }));
-        }
+        },
     };
 
     // gestione item carrello
@@ -103,6 +145,28 @@ export default function Carrello({ idCarrello, context }) {
         },
     };
 
+
+    useEffect(() => {
+        /*
+            Entro qui dentro se:
+                1. seleziono una vecchia spesa
+                2. resetto la vecchia spesa selezionata
+        */
+        (async () => {
+            //await context.loadVecchiaSpesa();
+            /*
+            if (contextSpesaAperta.get()) {
+                await contextProdotto.loadVecchiaSpesa();
+            }
+            */
+            await contextCarrello.refresh();
+        })();
+    },
+        // eslint-disable-next-line
+        [contextSpesaAperta.get()]
+    );
+
+
     return (
         <>
             {
@@ -118,8 +182,8 @@ export default function Carrello({ idCarrello, context }) {
             <div style={{ color: "blue" }}>
                 <input type="text" placeholder="Nome carrello"
                     className={`select-input`}
-                    value={fields.nomeCarrello}
-                    onChange={(e) => setFields(prevState => ({
+                    value={localContext.nomeCarrello}
+                    onChange={(e) => setLocalContext(prevState => ({
                         ...prevState,
                         nomeCarrello: e.target.value
                     }))}
@@ -128,7 +192,7 @@ export default function Carrello({ idCarrello, context }) {
                 <input
                     type="number"
                     step='0.01'
-                    placeholder="Valore ticket"
+                    placeholder="Val. ticket"
                     className="select-input"
                     value={localContext.valTicket}
                     onChange={(e) => setLocalContext(prevState => ({

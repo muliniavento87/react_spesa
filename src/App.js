@@ -9,17 +9,16 @@ function App() {
     // gestione spesa
     const contextSpesaAperta = {
         get: () => {
-            if (!vecchiaSpesa) {
-                return null;
-            }
             return vecchiaSpesa;
         },
+        /*
         getId: () => {
             if (!vecchiaSpesa) {
                 return -1;
             }
             return vecchiaSpesa.id;
         },
+        */
         reset: () => {
             setVecchiaSpesa(null);
         },

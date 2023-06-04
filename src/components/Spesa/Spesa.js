@@ -24,11 +24,12 @@ export default function Spesa({ contextSpesaAperta }) {
     // gestione spesa
     const contextSpesa = {
         refresh: async () => {
-            let spesaAttuale = contextSpesaAperta.get();
+            // refresh pagina => inizializza a vuoto o se selezionata usa la vecchia spesa
+            const spesaAperta = contextSpesaAperta.get();
 
-            console.log(spesaAttuale);
-            if (!spesaAttuale) {
-                spesaAttuale = {
+            let vecchiaSpesa = spesaAperta;
+            if (!vecchiaSpesa) {
+                vecchiaSpesa = {
                     id: -1,
                     name: '',
                     supermercato: ''
@@ -36,10 +37,26 @@ export default function Spesa({ contextSpesaAperta }) {
             }
             setLocalContext(prevState => ({
                 ...prevState,
-                idSpesa: spesaAttuale.id,
-                nomeSpesa: spesaAttuale.name,
-                nomeSupermercato: spesaAttuale.supermercato,
+                idSpesa: vecchiaSpesa.id,
+                nomeSpesa: vecchiaSpesa.name,
+                nomeSupermercato: vecchiaSpesa.supermercato,
             }));
+
+            // creo N carrelli quanti sono quelli recuperati dal db
+            let newIndex = 0;
+            let newIndexCarrello = [];
+            if (spesaAperta) {
+                // carico gli id del db dalla vecchia spesa
+                for (let c of spesaAperta.carrelli) {
+                    // li carico al contrario in modo da avere in cima gli ultimi carrelli
+                    newIndexCarrello = [{
+                        index: newIndex,
+                        id: c.id
+                    }].concat(newIndexCarrello);
+                    newIndex++;
+                }
+                setIndexCarrello(newIndexCarrello);
+            }
         },
         setNomeSupermercato: (e) => {
             setLocalContext(prevState => ({
@@ -60,15 +77,24 @@ export default function Spesa({ contextSpesaAperta }) {
         add: async () => {
             let newIndex = 0;
             if (indexCarrello.length > 0) {
-                newIndex = indexCarrello[0] + 1;
+                //newIndex = indexCarrello[0] + 1;
+                for (let ic of indexCarrello) {
+                    if (ic > newIndex) {
+                        newIndex = ic;
+                    }
+                }
+                newIndex++;
             }
-            setIndexCarrello([newIndex].concat(indexCarrello));
+            setIndexCarrello([{
+                index: newIndex,
+                id: -1
+            }].concat(indexCarrello));
         },
         update: async (id) => {
 
         },
-        remove: async (id) => {
-            setIndexCarrello(indexCarrello.filter(o => o !== id));
+        remove: async (idCarrello) => {
+            setIndexCarrello(indexCarrello.filter(o => o.index !== idCarrello.index));
         },
         addProdotto: async () => {
 
@@ -81,12 +107,28 @@ export default function Spesa({ contextSpesaAperta }) {
         },
     };
 
+    useEffect(() => {
+        //console.log(indexCarrello);
+    },
+        // eslint-disable-next-line
+        [indexCarrello]
+    );
+
 
     useEffect(() => {
+        /*
+            Entro qui dentro se:
+                1. seleziono una vecchia spesa
+                2. resetto la vecchia spesa selezionata
+        */
         (async () => {
             await contextSpesa.refresh();
+            if (!contextSpesaAperta.get()) {
+                // reset vecchia spesa => svuoto lista carrelli della spesa
+                setIndexCarrello([]);
+            }
+            //await contextCarrello.loadVecchiaSpesa();
         })();
-
     },
         // eslint-disable-next-line
         [contextSpesaAperta.get()]
@@ -122,7 +164,12 @@ export default function Spesa({ contextSpesaAperta }) {
             <div className="pt-3">
                 <button onClick={() => { contextCarrello.add() }}>Nuovo carrello</button>
                 {
-                    indexCarrello.length > 0 && indexCarrello.map(id => <Carrello key={id} idCarrello={id} context={contextCarrello} />)
+                    indexCarrello.length > 0 && indexCarrello.map(o =>
+                        <Carrello
+                            key={o.index}
+                            idCarrello={o}
+                            context={contextCarrello}
+                            contextSpesaAperta={contextSpesaAperta} />)
                 }
             </div>
         </>
